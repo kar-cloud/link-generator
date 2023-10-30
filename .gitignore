@@ -2,8 +2,6 @@ venv/
 .env
 media/
 .idea/
-*.pyc
-**__pycache__
-**__pycache__**
 **/__pycache__/
 **/migrations/
+static/
