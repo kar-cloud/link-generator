@@ -8,8 +8,16 @@ from .models import Link
 
 class UserFileViewSet(viewsets.ModelViewSet):
     serializer_class = FileSerializer
-    http_method_names = ['post', 'delete']
+    http_method_names = ['post', 'delete', 'get']
     queryset = Link.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        member_id, error_response = verify_member(request)
+        if error_response:
+            return response.Response(error_response, status=status.HTTP_401_UNAUTHORIZED)
+        request.data['member'] = member_id
+        self.queryset = self.queryset.filter(member_id=member_id).order_by('-created_at')
+        return super().list(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         member_id, error_response = verify_member(request)
