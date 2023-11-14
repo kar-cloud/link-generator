@@ -23,5 +23,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('generator/', include('generator.urls')),
     path('accounts/', include('accounts.urls')),
-    path('<str:username>/<str:token>/', get_file_view, name="get_file_view")
+    path('<str:username>/<str:token>/', get_file_view, name="get_file_view"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
