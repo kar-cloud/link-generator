@@ -10,6 +10,6 @@ def generate_qr(request, instance):
           os.makedirs(PATH)
      domain_name = request.build_absolute_uri('/')
      file_name = instance.link.split("/")[-1] + ".png"
-     image = qrcode.make(domain_name + instance.file.url[1:])
+     image = qrcode.make(instance.link)
      image.save(PATH + file_name)
      return domain_name + "media/qr/" + file_name
