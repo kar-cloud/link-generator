@@ -1,6 +1,7 @@
 from rest_framework import viewsets, response, status
+from rest_framework.decorators import api_view
 from .serializers import MemberSerializer
-from .services import get_member_details
+from .services import get_member_details, get_member_details_by_id
 from common.jwt import generate_token, verify_member
 
 
@@ -46,3 +47,18 @@ class VerifyMemberViewSet(viewsets.ModelViewSet):
         if user_id and not error:
             return response.Response({"user": "Verified"}, status=status.HTTP_200_OK)
         return response.Response({"user": "Not Verified"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def get_user_details(request):
+    member_id, error_response = verify_member(request)
+    if error_response:
+        return response.Response(error_response, status=status.HTTP_401_UNAUTHORIZED)
+
+    member_obj = get_member_details_by_id(member_id)
+    if member_obj:
+        return response.Response({
+            "email": member_obj.email,
+            "username": member_obj.username
+        }, status=status.HTTP_200_OK)
+    return response.Response({}, status=status.HTTP_400_BAD_REQUEST)

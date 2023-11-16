@@ -6,7 +6,13 @@ from generator.models import Link, Viewer
 def create_shortened_link(request):
     domain_name = request.build_absolute_uri('/')
     member = get_member_details_by_id(request.data.get('member'))
-    token = generate_token()
+    custom_url = request.data.get('custom_url')
+    is_valid_custom_url = False
+    if custom_url is not None:
+        links = get_link_objects_by_member_id(member.id, custom_url=custom_url)
+        if not links:
+            is_valid_custom_url = True
+    token = custom_url if is_valid_custom_url else generate_token()
     return '{0}{1}/{2}'.format(domain_name, member.username, token)
 
 
@@ -36,3 +42,7 @@ def get_viewer_obj(ip_address):
         return Viewer.objects.get(ip_address=ip_address)
     except:
         return None
+    
+
+def get_link_objects_by_member_id(member_id, **kwargs):
+    return Link.objects.filter(member_id=member_id, **kwargs)
