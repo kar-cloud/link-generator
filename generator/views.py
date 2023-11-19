@@ -25,10 +25,11 @@ class UserFileViewSet(viewsets.ModelViewSet):
         member_id, error_response = verify_member(request)
         if error_response:
             return response.Response(error_response, status=status.HTTP_401_UNAUTHORIZED)
-        request.data['member'] = member_id
-        serializer = self.get_serializer(data=request.data)
+        data = request.data.copy()
+        data['member'] = member_id
+        serializer = self.get_serializer(data=data)
         if serializer.is_valid():
-            link = create_shortened_link(request)
+            link = create_shortened_link(request, member_id)
             instance = serializer.save(link=link)
             instance.qr_code = generate_qr(request, instance)
             instance.save()
@@ -72,5 +73,5 @@ def get_file_view(request, **kwargs):
         pass
 
     if file_obj:
-        return redirect(file_obj.file.url)
+        return redirect(file_obj.file.url) if file_obj.file else redirect(file_obj.pre_generated_url)
     return None

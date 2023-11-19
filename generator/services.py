@@ -3,9 +3,9 @@ from common.token_generator import generate_token
 from generator.models import Link, Viewer
 
 
-def create_shortened_link(request):
+def create_shortened_link(request, member_id):
     domain_name = request.build_absolute_uri('/')
-    member = get_member_details_by_id(request.data.get('member'))
+    member = get_member_details_by_id(member_id)
     custom_url = request.data.get('custom_url')
     is_valid_custom_url = False
     if custom_url is not None:
